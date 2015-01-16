@@ -1,23 +1,38 @@
-open-weather-map
-================
-
+# OpenWeatherMap
 Simple class for retrieve current weather.
 
-Setup
------
+## Usage
 ```php
-include 'OpenWeatherMap.php';
+<?php
+use FuHsi\OpenWeatherMap\OpenWeatherMap;
+use FuHsi\FileCache\FileCache;
 
-// all below settings are default
-$weatherConfig = array(
-    'APPID' => '', // Your API key
-    'dir' => '.';
-    'units' => OpenWeatherMap::UNITS_METRIC,
-    'lang' => OpenWeatherMap::LANG_POLISH,
-    'lifetime' => 10800 // Cache data for 3 hours
-);
+require 'vendor/autoload.php';
 
-$weather = new OpenWeatherMap($weatherConfig);
+$cache = new FileCache(array(
+    'cacheDir' => __DIR__,
+    'lifeTime' => FileCache::HOUR * 3,
+    'format' => FileCache::FORMAT_JSON
+));
+
+$cityNameKey = 'Warsaw';
+
+$weatherData = $cache->get($cityNameKey, false, function () use ($cityNameKey)
+{
+    // all below options are default
+    $options = array(
+        'APPID' => '', // Your API key
+        'units' => OpenWeatherMap::UNITS_METRIC,
+        'lang' => OpenWeatherMap::LANG_POLISH
+    );
+    
+    $weather = new OpenWeatherMap($options);
+    return $weather->getCurrentWeatherByCityName($cityNameKey);
+});
+
+var_dump($weatherData);
+
+?>
 ```
 Retrieve weather by City name:
 ```php
@@ -30,10 +45,6 @@ $weatherData = $weather->getCurrentWeatherByCityName('Warsaw,pl');
 Retrieve weather by City id (recommended):
 ```php
 $weatherData = $weather->getCurrentWeatherByCityName(756135); 
-```
-Dump data:
-```php
-var_dump($weatherData);
 ```
 Retrieve image:
 ```php

@@ -1,38 +1,24 @@
 <?php
-
 /**
  * OpenWeatherMap
  * 
  * To access the API you need to sign up for an API key if you are on a free or paid plan.
  * http://openweathermap.org/appid
  *
- * @author      Fu-Hsi
- * @copyright   2014 Fu-Hsi
+ * @author      Mariusz 'Fu-Hsi' Kacki
+ * @copyright   2014 Mariusz 'Fu-Hsi' Kacki
  * @package     OpenWeatherMap
  * @version     1.0.0
  * @link        https://github.com/fu-hsi/open-weather-map
  * @license     http://opensource.org/licenses/MIT MIT License
- * 
- * <code>
- * $weatherConfig = array(
- *     'APPID' => 'API key',
- *     'dir' => '.';
- *     'units' => OpenWeatherMap::UNITS_METRIC,
- *     'lang' => OpenWeatherMap::LANG_POLISH,
- *     'lifetime' => 10800
- * );
- * 
- * $weather = new OpenWeatherMap($weatherConfig);
- * $weatherData = $weather->getCurrentWeatherByCityName('Warsaw,pl');
- * 
- * var_dump($weatherData);
- * </code>
  */
 
+namespace FuHsi\OpenWeatherMap;
+ 
 /**
  *
  * @package OpenWeatherMap
- * @author Fu-Hsi
+ * @author Mariusz 'Fu-Hsi' Kacki
  * @since 1.0.0
  */
 class OpenWeatherMap
@@ -84,20 +70,18 @@ class OpenWeatherMap
 
     const END_POINT = 'http://api.openweathermap.org/data/2.5/weather?%s&lang=%s&units=%s&APPID=%s';
 
-    private $config;
+    private $options;
 
     /**
      *
-     * @param array $config            
+     * @param array $options            
      */
-    public function __construct(array $config = array())
+    public function __construct(array $options = array())
     {
-        $this->config = array_merge(array(
-            'dir' => '.',
+        $this->options = array_merge(array(
             'units' => self::UNITS_METRIC,
-            'lang' => self::LANG_POLISH,
-            'lifetime' => 10800
-        ), $config);
+            'lang' => self::LANG_POLISH
+        ), $options);
     }
 
     /**
@@ -109,7 +93,7 @@ class OpenWeatherMap
      */
     public function getCurrentWeatherByCityName($cityName)
     {
-        $url = sprintf(self::END_POINT, 'q=' . urlencode($cityName), $this->config['lang'], $this->config['units'], $this->config['APPID']);
+        $url = sprintf(self::END_POINT, 'q=' . urlencode($cityName), $this->options['lang'], $this->options['units'], $this->options['APPID']);
         return $this->loadData($url);
     }
 
@@ -122,7 +106,7 @@ class OpenWeatherMap
      */
     public function getCurrentWeatherByCityId($cityId)
     {
-        $url = sprintf(self::END_POINT, 'id=' . intval($cityId), $this->config['lang'], $this->config['units'], $this->config['APPID']);
+        $url = sprintf(self::END_POINT, 'id=' . intval($cityId), $this->options['lang'], $this->options['units'], $this->options['APPID']);
         return $this->loadData($url);
     }
 
@@ -133,21 +117,9 @@ class OpenWeatherMap
      */
     private function loadData($url)
     {
-        $fileName = rtrim($this->config['dir'], '/\\') . DIRECTORY_SEPARATOR . md5($url);
-        
-        if (file_exists($fileName) && time() - filemtime($fileName) < $this->config['lifetime']) {
-            if (($data = file_get_contents($fileName)) !== false) {
-                return json_decode($data);
-            }
-        } else {
-            if (($data = file_get_contents($url)) !== false) {
-                file_put_contents($fileName, $data);
-                return json_decode($data);
-            } else {
-                touch($fileName);
-            }
+        if (($data = file_get_contents($url)) !== false) {
+            return json_decode($data);
         }
-        
         return false;
     }
 

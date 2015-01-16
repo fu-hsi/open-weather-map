@@ -1,0 +1,21 @@
+{
+    "name": "fu-hsi/open-weather-map",
+    "description": "OpenWeatherMap Class",
+    "keywords": ["weather"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Mariusz Kacki"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=5.4.0",
+        "fu-hsi/file-cache": "dev-master",
+    },
+    "autoload": {
+        "psr-4": {
+            "FuHsi\\OpenWeatherMap\\": "OpenWeatherMap"
+        }
+    }    
+}
