@@ -50,3 +50,12 @@ Retrieve image:
 ```php
 echo '<img src="' . OpenWeatherMap::getIconUrl($weatherData->weather[0]->icon) . '" alt="' . $weatherData->weather[0]->description . '">';
 ```
+## Install via Composer
+```
+{
+    "require": {
+        "fu-hsi/open-weather-map": "dev-master"
+    },
+    "minimum-stability": "dev"
+}
+```
